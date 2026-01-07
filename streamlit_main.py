@@ -57,22 +57,26 @@ if uploaded_files:
     cols_per_row = 4
     cols = st.columns(cols_per_row)
 
-    for idx, file in enumerate(uploaded_files):
-        # % 연산으로 위치 결정
+for idx, file in enumerate(uploaded_files):
         with cols[idx % cols_per_row]:
-            # use_column_width 대신 use_container_width 사용 (최신 버전 권장)
-            st.image(file, caption=f"Image: {file.name}", use_container_width=True)
-            if classify_btn:
-                with st.spinner(f"분석중{file.name}..."):
-                    predictions = classifier.predict(file, top_k=5)
-                # 가장 높은 확률의 결과 표시
-                top_prediction = predictions[0]
-                label_name = top_prediction['label']
-                prefix = get_emoji_prefix(label_name)
-                st.success(f"**{prefix}{label_name} ({score*100:.2f}%)**")
+            with st.container(border=True): 
+                st.image(file, caption=f"Image: {file.name}", use_container_width=True)
+                
+                result_area = st.empty() 
 
-                #전체 결과를 막대 데이터로 시각화
-                chart_df = pd.DataFrame(predictions)
-                st.bar_chart(data=chart_df, x='label', y='score', use_container_width=True)
-            else:
-                st.info("분류하려면 '이미지 분류 시작하기' 버튼을 클릭하세요.")
+                if classify_btn:
+                    with st.spinner("분석중..."):
+                        predictions = classifier.predict(file, top_k=5)
+                    
+                    top_prediction = predictions[0]
+                    label_name = top_prediction['label']
+                    score = top_prediction['score'] 
+                    prefix = get_emoji_prefix(label_name)
+                    
+                    # #### 3. 결과 표시 ####
+                    st.success(f"**{prefix}{label_name} ({score*100:.2f}%)**")
+                    
+                    chart_df = pd.DataFrame(predictions)
+                    st.bar_chart(data=chart_df, x='label', y='score', use_container_width=True)
+                else:
+                    st.info("분류하려면 '이미지 분류 시작하기' 버튼을 클릭하세요.")
