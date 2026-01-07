@@ -12,78 +12,63 @@ def load_classifier():
 
 classifier = load_classifier()
 
-st.set_page_config(page_title="Image_classification_", layout="wide")
-
+st.set_page_config(page_title="Image Classification", layout="wide")
 st.title("Image Classification Application")
-st.write("이미지를 분류하기 위해 분류할 이미지를 업로드하세요.")
 
-
-
-# 1. CSS 주입: 모든 이미지를 동일한 높이로 고정
+# 1. 이미지 높이 고정 CSS
 st.markdown("""
     <style>
-    /* 이미지 컨테이너 높이 고정 및 정렬 */
     div[data-testid="stImage"] img {
-        height: 400px;       /* 원하는 높이로 조절하세요 */
-        object-fit: cover;   /* 비율을 유지하면서 고정된 크기에 꽉 채움 */
-        width: 100%;         /* 너비는 컬럼에 맞춤 */
-        border-radius: 10px; /* 모서리 둥글게 */
+        height: 300px;
+        object-fit: cover;
+        width: 100%;
+        border-radius: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
-
 
 def get_emoji_prefix(label):
     clean_label = label.lower().replace(" ", "_")
     alias = f":{clean_label}:"
     converted = emoji.emojize(alias, language='alias')
-    if converted == alias:
-        return ""
-    return converted + " "
+    return converted + " " if converted != alias else ""
 
-# 2. 업로드된 이미지 표시
+# 2. 사이드바 설정
 st.sidebar.header("Upload image")
 uploaded_files = st.sidebar.file_uploader(
     "이미지를 선택하세요", type=["jpg", "jpeg", "png"], accept_multiple_files=True
 )
 
-if uploaded_files:
-    num_images = len(uploaded_files)
-    classify_btn = st.sidebar.button("이미지 분류 시작하기", use_container_width=True)
-    st.title("이미지 미리보기")
-    st.write("---")
-    
-    # 한 줄에 보여줄 컬럼 개수 (예: 4개)
-    cols_per_row = 4
-    cols = st.columns(cols_per_row)
 
 if uploaded_files:
-    num_images = len(uploaded_files)
-    classify_btn = st.sidebar.button("이미지 분류 시작하기", use_container_width=True)
-    st.title("이미지 미리보기")
-    st.write("---")
+    classify_btn = st.sidebar.button("이미지 분류 시작하기", width='stretch')
     
-    # 한 줄에 보여줄 컬럼 개수
+    st.write("---")
     cols_per_row = 4
     cols = st.columns(cols_per_row)
 
     for idx, file in enumerate(uploaded_files):
         with cols[idx % cols_per_row]:
-            with st.container(border=True): 
-                st.image(file, caption=f"Image: {file.name}", use_container_width=True)
+            with st.container(border=True): # 테두리 박스 추가
+                st.image(file, caption=f"File: {file.name}", width='stretch')
                 
                 if classify_btn:
-                    with st.spinner("분석중..."):
+                    with st.spinner("분석 중..."):
                         predictions = classifier.predict(file, top_k=5)
                     
-                    top_prediction = predictions[0]
-                    label_name = top_prediction['label']
-                    score = top_prediction['score'] # 코드는 완벽합니다!
+                    # 데이터 추출
+                    top_pred = predictions[0]
+                    label_name = top_pred['label']
+                    score = top_pred['score'] # <-- score 변수 확실히 정의
                     prefix = get_emoji_prefix(label_name)
                     
+                    # 결과 출력
                     st.success(f"**{prefix}{label_name} ({score*100:.2f}%)**")
                     
+                    # 차트 출력
                     chart_df = pd.DataFrame(predictions)
-                    st.bar_chart(data=chart_df, x='label', y='score', use_container_width=True)
+                    st.bar_chart(data=chart_df, x='label', y='score', width='stretch')
                 else:
-                    st.info("분류하려면 버튼을 클릭하세요.")
+                    st.info("분류 버튼을 눌러주세요.")
+else:
+    st.info("사이드바에서 이미지를 업로드하세요.")
