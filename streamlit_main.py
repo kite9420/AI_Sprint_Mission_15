@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import model
 from model import ImageClassifier
+import emoji
 
 @st.cache_resource
 def load_classifier():
