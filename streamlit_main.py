@@ -28,10 +28,16 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 def get_emoji_prefix(label):
-    clean_label = label.lower().replace(" ", "_")
-    alias = f":{clean_label}:"
-    converted = emoji.emojize(alias, language='alias')
-    return converted + " " if converted != alias else ""
+    words = label.lower().replace(",", " ").replace("_", " ").split()
+    
+    for word in reversed(words):
+        alias = f":{word}:"
+        converted = emoji.emojize(alias, language='alias')
+        
+        if converted != alias:
+            return converted + " "
+            
+    return ""
 
 # 2. 사이드바 설정
 st.sidebar.header("Upload image")
