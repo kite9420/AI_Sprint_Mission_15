@@ -31,6 +31,15 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+
+def get_emoji_prefix(label):
+    clean_label = label.lower().replace(" ", "_")
+    alias = f":{clean_label}:"
+    converted = emoji.emojize(alias, language='alias')
+    if converted == alias:
+        return ""
+    return converted + " "
+
 # 2. 업로드된 이미지 표시
 st.sidebar.header("Upload image")
 uploaded_files = st.sidebar.file_uploader(
@@ -57,7 +66,9 @@ if uploaded_files:
                     predictions = classifier.predict(file, top_k=5)
                 # 가장 높은 확률의 결과 표시
                 top_prediction = predictions[0]
-                st.success(f"**{top_prediction['label']} ({top_prediction['score']*100:.2f}%)**")
+                label_name = top_prediction['label']
+                prefix = get_emoji_prefix(label_name)
+                st.success(f"**{prefix}{label_name} ({score*100:.2f}%)**")
 
                 #전체 결과를 막대 데이터로 시각화
                 chart_df = pd.DataFrame(predictions)
