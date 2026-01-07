@@ -57,26 +57,33 @@ if uploaded_files:
     cols_per_row = 4
     cols = st.columns(cols_per_row)
 
-for idx, file in enumerate(uploaded_files):
+if uploaded_files:
+    num_images = len(uploaded_files)
+    classify_btn = st.sidebar.button("이미지 분류 시작하기", use_container_width=True)
+    st.title("이미지 미리보기")
+    st.write("---")
+    
+    # 한 줄에 보여줄 컬럼 개수
+    cols_per_row = 4
+    cols = st.columns(cols_per_row)
+
+    for idx, file in enumerate(uploaded_files):
         with cols[idx % cols_per_row]:
             with st.container(border=True): 
                 st.image(file, caption=f"Image: {file.name}", use_container_width=True)
                 
-                result_area = st.empty() 
-
                 if classify_btn:
                     with st.spinner("분석중..."):
                         predictions = classifier.predict(file, top_k=5)
                     
                     top_prediction = predictions[0]
                     label_name = top_prediction['label']
-                    score = top_prediction['score'] 
+                    score = top_prediction['score'] # 코드는 완벽합니다!
                     prefix = get_emoji_prefix(label_name)
                     
-                    # #### 3. 결과 표시 ####
                     st.success(f"**{prefix}{label_name} ({score*100:.2f}%)**")
                     
                     chart_df = pd.DataFrame(predictions)
                     st.bar_chart(data=chart_df, x='label', y='score', use_container_width=True)
                 else:
-                    st.info("분류하려면 '이미지 분류 시작하기' 버튼을 클릭하세요.")
+                    st.info("분류하려면 버튼을 클릭하세요.")
