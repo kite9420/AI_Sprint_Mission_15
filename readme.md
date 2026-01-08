@@ -1,3 +1,5 @@
+코드잇_AI_5기_서민경_미션17
+streamlit 배포 주소 : https://ai5sprintmission15smk.streamlit.app/
 
 사용할 모델 : google/vit-base-patch16-224
 핵심 구현요소
@@ -12,4 +14,4 @@
 2 : 이미지 파일 업로드 위젯 -> 사이드 바 o
 3 : 업로드된 이미지 화면에 표시 -> 메인 페이지 o
 4 : 분류 실행버튼 -> o
-5 : 분류 후 결과 출력 창
+5 : 분류 후 결과 출력 창 -> o
