@@ -15,3 +15,5 @@ streamlit 배포 주소 : https://ai5sprintmission15smk.streamlit.app/
 3 : 업로드된 이미지 화면에 표시 -> 메인 페이지 o
 4 : 분류 실행버튼 -> o
 5 : 분류 후 결과 출력 창 -> o
+
+<img width="1419" height="1043" alt="image" src="https://github.com/user-attachments/assets/ad43b3fc-c179-4285-910b-587d65eb6a35" />
